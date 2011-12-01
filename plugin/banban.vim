@@ -25,7 +25,7 @@ let g:banban_move_y = get(g:, 'banban_move_y', 15)
 " NOTE: Delay the a load of this script until VimEnter.
 " Because :winpos raised an error on gVim (Windows)
 " while loading this script at startup.
-augroup winmove
+augroup banban-winpos-check
     autocmd!
     autocmd VimEnter * let s:delayed = 1 | source <sfile>
 augroup END
