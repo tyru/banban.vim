@@ -140,6 +140,7 @@ function! s:restore_context()
         else
             let &statusline = s:context.statusline
         endif
+        let &laststatus = s:context.laststatus
         " Unregister autocmd.
         autocmd! banban
     finally
@@ -152,6 +153,7 @@ function! s:cmd_banban(n)
     let context = {}
     let context.statusline_is_local = &l:statusline !=# ''
     let context.statusline = &l:statusline !=# '' ? &l:statusline : &statusline
+    let context.laststatus = &laststatus
     let context.bufnr = bufnr('%')
     let context.aa_index = 0
     let n = a:n > 0 ? a:n : 0
@@ -165,6 +167,7 @@ function! s:cmd_banban(n)
         autocmd CursorMoved * call s:cursormoved()
     augroup END
     " Overwrite statusline.
+    let &laststatus   = 2
     let &l:statusline = '%{BanbanAA()}'
 endfunction
 
