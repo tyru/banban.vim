@@ -19,7 +19,7 @@ let g:banban_move_x = get(g:, 'banban_move_x', 20)
 let g:banban_move_y = get(g:, 'banban_move_y', 15)
 
 
-let s:aa_list = [
+let s:AA_LIST = [
 \   'ﾊﾞﾝ（∩`･ω･）ﾊﾞﾝﾊﾞﾝ',
 \   'ﾊﾞﾝ（⊃`･ω･）ﾊﾞﾝﾊﾞﾝ',
 \   'ﾊﾞﾝ（∩`･ω･）ﾊﾞﾝﾊﾞﾝﾊﾞﾝ',
@@ -45,18 +45,19 @@ let s:aa_list = [
 \   'ﾊﾞﾝ（∩`･ω･）ﾊﾞﾝﾊﾞﾝﾊﾞﾝﾊﾞﾝﾊﾞﾝﾊﾞﾝﾊﾞﾝﾊﾞﾝﾊﾞﾝﾊﾞﾝﾊﾞﾝﾊﾞﾝﾊﾞﾝ',
 \   'ﾊﾞﾝ（⊃`･ω･）ﾊﾞﾝﾊﾞﾝﾊﾞﾝﾊﾞﾝﾊﾞﾝﾊﾞﾝﾊﾞﾝﾊﾞﾝﾊﾞﾝﾊﾞﾝﾊﾞﾝﾊﾞﾝﾊﾞﾝ',
 \]
-let s:aa_index = 0
+let s:context = {}
 
 
 " statusline
 function! BanbanAA()
-    return get(s:aa_list, s:aa_index, s:aa_list[0])
+    if empty(s:context) | return '' | endif
+    return get(s:AA_LIST, s:context.aa_index, s:AA_LIST[0])
 endfunction
 
 function! s:update_statusline()
-    let s:aa_index =
-    \   len(s:aa_list) > s:aa_index + 1 ?
-    \       s:aa_index + 1 :
+    let s:context.aa_index =
+    \   len(s:AA_LIST) > s:context.aa_index + 1 ?
+    \       s:context.aa_index + 1 :
     \       0
     redrawstatus
 endfunction
@@ -113,13 +114,46 @@ function! s:cursormoved()
     endtry
 endfunction
 
+function! s:restore_context()
+    if empty(s:context)                 | return | endif
+    if s:context.bufnr isnot bufnr('%') | return | endif
 
-augroup banban
-    autocmd!
-    autocmd CursorMoved * call s:cursormoved()
-augroup END
+    try
+        " Restore statusline.
+        let &l:statusline = s:context.statusline
+        " Unregister autocmd.
+        autocmd! banban
+    finally
+        let s:context = {}    " let context free.
+    endtry
+endfunction
 
-let &statusline = '%{BanbanAA()}'
+function! s:cmd_banban(n)
+    " TODO: Use a:n
+
+    " Save context.
+    let context = {}
+    let context.statusline = &l:statusline !=# '' ? &l:statusline : &statusline
+    let context.bufnr = bufnr('%')
+    let context.aa_index = 0
+    let s:context = context
+
+    " Register autocmd.
+    augroup banban
+        autocmd!
+        autocmd CursorMoved * call s:cursormoved()
+    augroup END
+    " Overwrite statusline.
+    let &l:statusline = '%{BanbanAA()}'
+endfunction
+
+function! s:create_ex_commands()
+    for i in range(5)
+        execute 'command! BanBan'.repeat('Ban', i).' call s:cmd_banban('.i.')'
+    endfor
+    command! BanBanYamete call s:restore_context()
+endfunction
+call s:create_ex_commands()
 
 
 " Restore 'cpoptions' {{{
