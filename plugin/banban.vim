@@ -143,7 +143,11 @@ function! s:restore_context()
 
     try
         " Restore statusline.
-        let &l:statusline = s:context.statusline
+        if s:context.statusline_is_local
+            let &l:statusline = s:context.statusline
+        else
+            let &statusline = s:context.statusline
+        endif
         " Unregister autocmd.
         autocmd! banban
     finally
@@ -156,6 +160,7 @@ function! s:cmd_banban(n)
 
     " Save context.
     let context = {}
+    let context.statusline_is_local = &l:statusline !=# ''
     let context.statusline = &l:statusline !=# '' ? &l:statusline : &statusline
     let context.bufnr = bufnr('%')
     let context.aa_index = 0
