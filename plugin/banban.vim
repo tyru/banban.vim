@@ -13,6 +13,13 @@ set cpo&vim
 " }}}
 
 
+" Global variables
+let g:banban_move_x = get(g:, 'banban_move_x', 20)
+let g:banban_move_y = get(g:, 'banban_move_y', 15)
+
+
+" Implementation {{{
+
 " Check if :winpos works {{{
 
 " NOTE: Delay the a load of this script until VimEnter.
@@ -33,11 +40,6 @@ catch /^Vim\%((\a\+)\)\=:E188/
     finish
 endtry
 " }}}
-
-
-" Global variables
-let g:banban_move_x = get(g:, 'banban_move_x', 20)
-let g:banban_move_y = get(g:, 'banban_move_y', 15)
 
 
 let s:AA_LIST = [
@@ -69,7 +71,7 @@ let s:AA_LIST = [
 let s:context = {}
 
 
-" statusline
+" for statusline
 function! BanbanAA()
     if empty(s:context) | return '' | endif
     return get(s:AA_LIST, s:context.aa_index, s:AA_LIST[0])
@@ -168,6 +170,8 @@ function! s:cmd_banban(n)
     let &l:statusline = '%{BanbanAA()}'
 endfunction
 
+
+
 function! s:create_ex_commands()
     for i in range(5)
         execute 'command! BanBan'.repeat('Ban', i).' call s:cmd_banban('.i.')'
@@ -175,6 +179,8 @@ function! s:create_ex_commands()
     command! BanBanYamete call s:restore_context()
 endfunction
 call s:create_ex_commands()
+
+" }}}
 
 
 " Restore 'cpoptions' {{{
