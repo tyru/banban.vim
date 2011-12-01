@@ -89,7 +89,6 @@ function! s:move_to(dest)
     if winpos['x'] < 0 | let winpos['x'] = 0 | endif
     if winpos['y'] < 0 | let winpos['y'] = 0 | endif
 
-    echom 'winpos' winpos['x'] winpos['y']
     execute 'winpos' winpos['x'] winpos['y']
 endfunction
 
