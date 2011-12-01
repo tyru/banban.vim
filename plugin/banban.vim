@@ -13,13 +13,6 @@ set cpo&vim
 " }}}
 
 
-" Global variables
-let g:banban_move_x = get(g:, 'banban_move_x', 20)
-let g:banban_move_y = get(g:, 'banban_move_y', 15)
-
-
-" Implementation {{{
-
 " Check if :winpos works {{{
 
 " NOTE: Delay the a load of this script until VimEnter.
@@ -98,17 +91,17 @@ function! s:move_to(dest)
     let repeat = v:count1
 
     if a:dest == '>'
-        let winpos['x'] = winpos['x'] + g:banban_move_x * repeat
+        let winpos['x'] = winpos['x'] + s:context.dx * repeat
     elseif a:dest == '<'
-        let winpos['x'] = winpos['x'] - g:banban_move_x * repeat
+        let winpos['x'] = winpos['x'] - s:context.dx * repeat
     elseif a:dest == '^'
         let winpos['y'] = has("gui_macvim") ?
-              \ winpos['y'] + g:banban_move_y * repeat :
-              \ winpos['y'] - g:banban_move_y * repeat
+              \ winpos['y'] + s:context.dy * repeat :
+              \ winpos['y'] - s:context.dy * repeat
     elseif a:dest == 'v'
         let winpos['y'] = has("gui_macvim") ?
-              \ winpos['y'] - g:banban_move_y * repeat :
-              \ winpos['y'] + g:banban_move_y * repeat
+              \ winpos['y'] - s:context.dy * repeat :
+              \ winpos['y'] + s:context.dy * repeat
     endif
     if winpos['x'] < 0 | let winpos['x'] = 0 | endif
     if winpos['y'] < 0 | let winpos['y'] = 0 | endif
@@ -156,14 +149,15 @@ function! s:restore_context()
 endfunction
 
 function! s:cmd_banban(n)
-    " TODO: Use a:n
-
     " Save context.
     let context = {}
     let context.statusline_is_local = &l:statusline !=# ''
     let context.statusline = &l:statusline !=# '' ? &l:statusline : &statusline
     let context.bufnr = bufnr('%')
     let context.aa_index = 0
+    let n = a:n > 0 ? a:n : 0
+    let context.dx = 20 + (7 * n)
+    let context.dy = 15 + (7 * n)
     let s:context = context
 
     " Register autocmd.
@@ -184,8 +178,6 @@ function! s:create_ex_commands()
     command! BanBanYamete call s:restore_context()
 endfunction
 call s:create_ex_commands()
-
-" }}}
 
 
 " Restore 'cpoptions' {{{
