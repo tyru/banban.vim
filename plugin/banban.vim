@@ -13,6 +13,27 @@ set cpo&vim
 " }}}
 
 
+" Check if :winpos works {{{
+
+" NOTE: Delay the a load of this script until VimEnter.
+" Because :winpos raised an error on gVim (Windows)
+" while loading this script at startup.
+augroup winmove
+    autocmd!
+    autocmd VimEnter * let s:delayed = 1 | source <sfile>
+augroup END
+if !exists('s:delayed')
+    finish
+endif
+
+" mattn says this plugin work on terminal. really??
+try
+    silent winpos
+catch /^Vim\%((\a\+)\)\=:E188/
+    finish
+endtry
+" }}}
+
 
 " Global variables
 let g:banban_move_x = get(g:, 'banban_move_x', 20)
