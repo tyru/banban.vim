@@ -1,18 +1,6 @@
 " vim:foldmethod=marker:fen:
 scriptencoding utf-8
 
-" Load Once {{{
-if (exists('g:loaded_banban') && g:loaded_banban) || &cp
-    finish
-endif
-let g:loaded_banban = 1
-" }}}
-" Saving 'cpoptions' {{{
-let s:save_cpo = &cpo
-set cpo&vim
-" }}}
-
-
 " Check if :winpos works {{{
 
 " NOTE: Delay the a load of this script until VimEnter.
@@ -32,6 +20,17 @@ try
 catch /^Vim\%((\a\+)\)\=:E188/
     finish
 endtry
+" }}}
+
+" Load Once {{{
+if (exists('g:loaded_banban') && g:loaded_banban) || &cp
+    finish
+endif
+let g:loaded_banban = 1
+" }}}
+" Saving 'cpoptions' {{{
+let s:save_cpo = &cpo
+set cpo&vim
 " }}}
 
 
