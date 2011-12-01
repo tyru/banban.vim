@@ -1,0 +1,128 @@
+" vim:foldmethod=marker:fen:
+scriptencoding utf-8
+
+" Load Once {{{
+if (exists('g:loaded_banban') && g:loaded_banban) || &cp
+    finish
+endif
+let g:loaded_banban = 1
+" }}}
+" Saving 'cpoptions' {{{
+let s:save_cpo = &cpo
+set cpo&vim
+" }}}
+
+
+
+" Global variables
+let g:banban_move_x = get(g:, 'banban_move_x', 20)
+let g:banban_move_y = get(g:, 'banban_move_y', 15)
+
+
+let s:aa_list = [
+\   'ﾊﾞﾝ（∩`･ω･）ﾊﾞﾝﾊﾞﾝ',
+\   'ﾊﾞﾝ（⊃`･ω･）ﾊﾞﾝﾊﾞﾝ',
+\   'ﾊﾞﾝ（∩`･ω･）ﾊﾞﾝﾊﾞﾝﾊﾞﾝ',
+\   'ﾊﾞﾝ（⊃`･ω･）ﾊﾞﾝﾊﾞﾝﾊﾞﾝ',
+\   'ﾊﾞﾝ（∩`･ω･）ﾊﾞﾝﾊﾞﾝﾊﾞﾝﾊﾞﾝ',
+\   'ﾊﾞﾝ（⊃`･ω･）ﾊﾞﾝﾊﾞﾝﾊﾞﾝﾊﾞﾝ',
+\   'ﾊﾞﾝ（∩`･ω･）ﾊﾞﾝﾊﾞﾝﾊﾞﾝﾊﾞﾝﾊﾞﾝ',
+\   'ﾊﾞﾝ（⊃`･ω･）ﾊﾞﾝﾊﾞﾝﾊﾞﾝﾊﾞﾝﾊﾞﾝ',
+\   'ﾊﾞﾝ（∩`･ω･）ﾊﾞﾝﾊﾞﾝﾊﾞﾝﾊﾞﾝﾊﾞﾝﾊﾞﾝ',
+\   'ﾊﾞﾝ（⊃`･ω･）ﾊﾞﾝﾊﾞﾝﾊﾞﾝﾊﾞﾝﾊﾞﾝﾊﾞﾝ',
+\   'ﾊﾞﾝ（∩`･ω･）ﾊﾞﾝﾊﾞﾝﾊﾞﾝﾊﾞﾝﾊﾞﾝﾊﾞﾝﾊﾞﾝ',
+\   'ﾊﾞﾝ（⊃`･ω･）ﾊﾞﾝﾊﾞﾝﾊﾞﾝﾊﾞﾝﾊﾞﾝﾊﾞﾝﾊﾞﾝ',
+\   'ﾊﾞﾝ（∩`･ω･）ﾊﾞﾝﾊﾞﾝﾊﾞﾝﾊﾞﾝﾊﾞﾝﾊﾞﾝﾊﾞﾝﾊﾞﾝ',
+\   'ﾊﾞﾝ（⊃`･ω･）ﾊﾞﾝﾊﾞﾝﾊﾞﾝﾊﾞﾝﾊﾞﾝﾊﾞﾝﾊﾞﾝﾊﾞﾝ',
+\   'ﾊﾞﾝ（∩`･ω･）ﾊﾞﾝﾊﾞﾝﾊﾞﾝﾊﾞﾝﾊﾞﾝﾊﾞﾝﾊﾞﾝﾊﾞﾝﾊﾞﾝ',
+\   'ﾊﾞﾝ（⊃`･ω･）ﾊﾞﾝﾊﾞﾝﾊﾞﾝﾊﾞﾝﾊﾞﾝﾊﾞﾝﾊﾞﾝﾊﾞﾝﾊﾞﾝ',
+\   'ﾊﾞﾝ（∩`･ω･）ﾊﾞﾝﾊﾞﾝﾊﾞﾝﾊﾞﾝﾊﾞﾝﾊﾞﾝﾊﾞﾝﾊﾞﾝﾊﾞﾝﾊﾞﾝ',
+\   'ﾊﾞﾝ（⊃`･ω･）ﾊﾞﾝﾊﾞﾝﾊﾞﾝﾊﾞﾝﾊﾞﾝﾊﾞﾝﾊﾞﾝﾊﾞﾝﾊﾞﾝﾊﾞﾝ',
+\   'ﾊﾞﾝ（∩`･ω･）ﾊﾞﾝﾊﾞﾝﾊﾞﾝﾊﾞﾝﾊﾞﾝﾊﾞﾝﾊﾞﾝﾊﾞﾝﾊﾞﾝﾊﾞﾝﾊﾞﾝ',
+\   'ﾊﾞﾝ（⊃`･ω･）ﾊﾞﾝﾊﾞﾝﾊﾞﾝﾊﾞﾝﾊﾞﾝﾊﾞﾝﾊﾞﾝﾊﾞﾝﾊﾞﾝﾊﾞﾝﾊﾞﾝ',
+\   'ﾊﾞﾝ（∩`･ω･）ﾊﾞﾝﾊﾞﾝﾊﾞﾝﾊﾞﾝﾊﾞﾝﾊﾞﾝﾊﾞﾝﾊﾞﾝﾊﾞﾝﾊﾞﾝﾊﾞﾝﾊﾞﾝ',
+\   'ﾊﾞﾝ（⊃`･ω･）ﾊﾞﾝﾊﾞﾝﾊﾞﾝﾊﾞﾝﾊﾞﾝﾊﾞﾝﾊﾞﾝﾊﾞﾝﾊﾞﾝﾊﾞﾝﾊﾞﾝﾊﾞﾝ',
+\   'ﾊﾞﾝ（∩`･ω･）ﾊﾞﾝﾊﾞﾝﾊﾞﾝﾊﾞﾝﾊﾞﾝﾊﾞﾝﾊﾞﾝﾊﾞﾝﾊﾞﾝﾊﾞﾝﾊﾞﾝﾊﾞﾝﾊﾞﾝ',
+\   'ﾊﾞﾝ（⊃`･ω･）ﾊﾞﾝﾊﾞﾝﾊﾞﾝﾊﾞﾝﾊﾞﾝﾊﾞﾝﾊﾞﾝﾊﾞﾝﾊﾞﾝﾊﾞﾝﾊﾞﾝﾊﾞﾝﾊﾞﾝ',
+\]
+let s:aa_index = 0
+
+
+" statusline
+function! BanbanAA()
+    return get(s:aa_list, s:aa_index, s:aa_list[0])
+endfunction
+
+function! s:update_statusline()
+    let s:aa_index =
+    \   len(s:aa_list) > s:aa_index + 1 ?
+    \       s:aa_index + 1 :
+    \       0
+    redrawstatus
+endfunction
+
+" this function is from winmove.vim
+function! s:move_to(dest)
+    if has('gui_running')
+        let winpos = { 'x':getwinposx(), 'y':getwinposy() }
+    else
+        redir => out | silent! winpos | redir END
+        let mpos = matchlist(out, '^[^:]\+: X \(-\?\d\+\), Y \(-\?\d\+\)')
+        if len(mpos) == 0 | return | endif
+        let winpos = { 'x':mpos[1], 'y':mpos[2] }
+    endif
+    let repeat = v:count1
+
+    if a:dest == '>'
+        let winpos['x'] = winpos['x'] + g:banban_move_x * repeat
+    elseif a:dest == '<'
+        let winpos['x'] = winpos['x'] - g:banban_move_x * repeat
+    elseif a:dest == '^'
+        let winpos['y'] = has("gui_macvim") ?
+              \ winpos['y'] + g:banban_move_y * repeat :
+              \ winpos['y'] - g:banban_move_y * repeat
+    elseif a:dest == 'v'
+        let winpos['y'] = has("gui_macvim") ?
+              \ winpos['y'] - g:banban_move_y * repeat :
+              \ winpos['y'] + g:banban_move_y * repeat
+    endif
+    if winpos['x'] < 0 | let winpos['x'] = 0 | endif
+    if winpos['y'] < 0 | let winpos['y'] = 0 | endif
+
+    echom 'winpos' winpos['x'] winpos['y']
+    execute 'winpos' winpos['x'] winpos['y']
+endfunction
+
+function! s:rand(n)
+    let match_end = matchend(reltimestr(reltime()), '\d\+\.') + 1
+    return reltimestr(reltime())[match_end : ] % a:n
+endfunction
+
+function! s:move_gvim()
+    call s:move_to(['^', '>', 'v', '<'][s:rand(4)])
+endfunction
+
+let s:doing_cursormoved = 0
+function! s:cursormoved()
+    if s:doing_cursormoved | return | endif
+    let s:doing_cursormoved = 1
+    try
+        call s:update_statusline()
+        call s:move_gvim()
+    finally
+        let s:doing_cursormoved = 0
+    endtry
+endfunction
+
+
+augroup banban
+    autocmd!
+    autocmd CursorMoved * call s:cursormoved()
+augroup END
+
+let &statusline = '%{BanbanAA()}'
+
+
+" Restore 'cpoptions' {{{
+let &cpo = s:save_cpo
+" }}}
