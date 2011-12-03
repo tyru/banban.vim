@@ -130,13 +130,12 @@ function! s:cursormoved()
 endfunction
 
 function! s:restore_context()
-    if empty(s:context)                 | return | endif
-    if s:context.bufnr isnot bufnr('%') | return | endif
+    if empty(s:context) | return | endif
 
     try
         " Restore statusline.
         if s:context.statusline_is_local
-            let &l:statusline = s:context.statusline
+            set statusline<
         else
             let &statusline = s:context.statusline
         endif
@@ -154,7 +153,6 @@ function! s:cmd_banban(n)
     let context.statusline_is_local = &l:statusline !=# ''
     let context.statusline = &l:statusline !=# '' ? &l:statusline : &statusline
     let context.laststatus = &laststatus
-    let context.bufnr = bufnr('%')
     let context.aa_index = 0
     let n = a:n > 0 ? a:n : 0
     let context.dx = 20 + (7 * n)
