@@ -135,7 +135,9 @@ function! s:restore_context()
     try
         " Restore statusline.
         if s:context.statusline_is_local
-            set statusline<
+            windo if exists('w:banban_statusline_is_local')
+            \   |   let &l:statusline = s:context.statusline
+            \   | endif
         else
             let &statusline = s:context.statusline
         endif
@@ -151,6 +153,9 @@ function! s:cmd_banban(n)
     " Save context.
     let context = {}
     let context.statusline_is_local = &l:statusline !=# ''
+    if context.statusline_is_local
+        let w:banban_statusline_is_local = 1
+    endif
     let context.statusline = &l:statusline !=# '' ? &l:statusline : &statusline
     let context.laststatus = &laststatus
     let context.aa_index = 0
@@ -166,7 +171,11 @@ function! s:cmd_banban(n)
     augroup END
     " Overwrite statusline.
     let &laststatus   = 2
-    let &l:statusline = '%{BanbanAA()}'
+    if context.statusline_is_local
+        let &l:statusline = '%{BanbanAA()}'
+    else
+        let &statusline = '%{BanbanAA()}'
+    endif
 endfunction
 
 
